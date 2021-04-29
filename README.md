@@ -33,3 +33,13 @@ Animulu is built on ASP.NET Core 3.1 with use of:
 * Font Awesome
 * jQuery
 * malihu custom scrollbar plugin
+
+##### NuGet Packages
+* Microsoft.AspNetCore.Identity.EntityFrameworkCore
+* Microsoft.AspNetCore.Identity.UI
+* Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation
+* Microsoft.Azure.SignalR
+* Microsoft.EntityFrameworkCore.Design
+* Microsoft.EntityFrameworkCore.SqlServer
+* Microsoft.EntityFrameworkCore.Tools
+* SendGrid
