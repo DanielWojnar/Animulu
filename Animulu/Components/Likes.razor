@@ -1,0 +1,100 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Animulu.Models;
+@using Animulu.Services;
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Http
+@using Microsoft.JSInterop 
+@inject LikeService _like
+@inject UserManager<AnimuluUser> _userManager
+@inject SignInManager<AnimuluUser> _signInManager
+@inject IHttpContextAccessor _iHttpCA
+@inject IJSRuntime _js
+<div class=" text-right float-right">
+    <button class=" btn btn-square-box-thumb @LikeClass" @onclick="(async () => await PostLikesAsync(true))">
+        <i class="fas fa-thumbs-up"></i>&nbsp @like
+    </button>
+    <button class="btn btn-square-box-thumb mr-md-4 mr-0 @DisLikeClass" @onclick="(async () => await PostLikesAsync(false))">
+        <i class="fas fa-thumbs-down fa-flip-horizontal "></i>&nbsp @dislike
+    </button>
+</div>
+
+@code {
+    [Parameter]
+    public Episode episodeObj { get; set; }
+    string like;
+    string dislike;
+    string LikeClass;
+    string DisLikeClass;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (_signInManager.IsSignedIn(_iHttpCA.HttpContext.User))
+        {
+            var like = await _like.GetLikeAsync(episodeObj, await _userManager.GetUserAsync(_iHttpCA.HttpContext.User));
+            if (like == null)
+            {
+                LikeClass = "";
+                DisLikeClass = "";
+            }
+            else if (like.Positive)
+            {
+                LikeClass = "color-purple";
+                DisLikeClass = "";
+            }
+            else if (!like.Positive)
+            {
+                LikeClass = "";
+                DisLikeClass = "color-purple";
+            }
+        }
+        else
+        {
+            LikeClass = "";
+            DisLikeClass = "";
+        }
+        await GetLikesAsync();
+    }
+
+    async Task GetLikesAsync()
+    {
+        like = await _like.GetLikesAsync(episodeObj);
+        dislike = await _like.GetDislikesAsync(episodeObj);
+    }
+
+    async Task PostLikesAsync(bool positive)
+    {
+        if (!_signInManager.IsSignedIn(_iHttpCA.HttpContext.User))
+        {
+            await _js.InvokeVoidAsync("LoginPopUp");
+            return;
+        }
+        await _like.PostLikeAsync(episodeObj, positive, await _userManager.GetUserAsync(_iHttpCA.HttpContext.User));
+        if (positive)
+        {
+            if (LikeClass == "")
+            {
+                LikeClass = "color-purple";
+                DisLikeClass = "";
+            }
+            else
+            {
+                LikeClass = "";
+                DisLikeClass = "";
+            }
+        }
+        else
+        {
+            if (DisLikeClass == "")
+            {
+                LikeClass = "";
+                DisLikeClass = "color-purple";
+            }
+            else
+            {
+                LikeClass = "";
+                DisLikeClass = "";
+            }
+        }
+        await GetLikesAsync();
+    }
+}

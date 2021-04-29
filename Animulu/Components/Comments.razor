@@ -1,0 +1,162 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Animulu.Models;
+@using Animulu.Services;
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Http
+@using Microsoft.JSInterop
+@inject UserManager<AnimuluUser> _userManager
+@inject SignInManager<AnimuluUser> _signInManager
+@inject IHttpContextAccessor _iHttpCA
+@inject NavigationManager _navigationManager
+@inject CommentService _comment
+@inject IJSRuntime _js
+<div class="col-md-9 col-12 ">
+    <div class="col-12 px-0 border-ep-thin mb-2">
+        <div class="col-12 px-0">
+        </div>
+    </div>
+    <h5>
+        @commentCount.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("de")) Comments
+    </h5>
+    <div class="col-12 my-3 p-0 m-0">
+        @if (isSignIn)
+        {
+            <div class="col-12 px-0 overflow-auto">
+                <img class="object-fit-cover float-left border-50" style=" height:60px;width:60px;" src="/images/avatars/@GetProfilePic(user)" />
+                <div oninput="CheckCommentBox()" id="CommentTextBox" contenteditable="true" class="border-0 bg-grey-dark font-content p-1 comment-text-box comment-text" data-placeholder="Add your comment..."></div>
+                <button id="CommentButton" class="btn btn-form float-right my-1" @onclick="@(async () => await PostCommentAsync())" disabled>Comment</button>
+            </div>
+        }
+        else
+        {
+            <div class="col-12 bg-grey p-2">
+                <a href="./SignIn?returnUrl=/@_navigationManager.ToBaseRelativePath(_navigationManager.Uri)" class="label-click-purple-dark font-weight-bold">Sign In</a> or <a href="./SignUp?returnUrl=/@_navigationManager.ToBaseRelativePath(_navigationManager.Uri)" class="font-weight-bold label-click-purple-dark">Sign Up</a> now to post a comment!
+            </div>
+        }
+        @foreach (var c in comments)
+        {
+            <div class="col-12 px-0 overflow-auto my-4">
+                @if (permisions || c.Username == username)
+                {
+                    <button @onclick="@(async () => await RemoveCommentAsync(c.Id))" class="btn btn-danger float-right font-content"><i class="fas fa-times"></i></button>
+                }
+                <img class="object-fit-cover float-left border-50" style=" height:60px;width:60px;" src="/images/avatars/@c.ProfilePic" />
+                <div class="font-content comment-text mb-1">
+                    <span class="font-weight-bold">@c.Username</span> <span class="font-weight-light text-muted">@DisplayDate(c.CreationDate) ago</span>
+                </div>
+                <div class="font-content comment-text">
+                    @c.Content
+                </div>
+            </div>
+        }
+        @if (comments.Count() > take)
+        {
+            <div class="col-12 px-0 my-4 overflow-auto position-relative">
+                <div class="float-left col-4 col-sm-5 bg-grey my-auto" style="height:3px; margin: 0; position: absolute; top: 50%; left:0; -ms-transform: translateY(-50%); transform: translateY(-50%);"></div>
+                <button @onclick="@(async () => await IncrementTakeAsync())" class="float-left col-sm-2 col-4 text-center offset-sm-5 offset-4 btn-square-box-grey btn font-content">Load More</button>
+                <div class="float-left col-4 col-sm-5 bg-grey my-auto" style="height:3px; margin: 0; position: absolute; top: 50%; right:0; -ms-transform: translateY(-50%); transform: translateY(-50%);"></div>
+            </div>
+        }
+    </div>
+</div>
+@code {
+    [Parameter]
+    public Episode episodeObj { get; set; }
+    public bool isSignIn;
+    public AnimuluUser user;
+    public int take = 8;
+    public IEnumerable<CommentDisplay> comments = new List<CommentDisplay>();
+    public int commentCount = 0;
+    public string username = "";
+    public bool permisions = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (_signInManager.IsSignedIn(_iHttpCA.HttpContext.User))
+        {
+            user = await _userManager.GetUserAsync(_iHttpCA.HttpContext.User);
+            isSignIn = true;
+            username = user.UserName;
+            if(await _userManager.IsInRoleAsync(user, "Admin"))
+            {
+                permisions = true;
+            }
+        }
+        await GetCommentsAsync();
+        await GetCommentCountAsync();
+    }
+    async Task RemoveCommentAsync(int commentid)
+    {
+        await _comment.RemoveCommentAsync(commentid);
+        await GetCommentsAsync();
+        await GetCommentCountAsync();
+    }
+    string GetProfilePic(AnimuluUser _user)
+    {
+        var result = "";
+        if (_user.ProfilePicExist)
+        {
+            result = _user.ProfilePicName + ".png";
+        }
+        else
+        {
+            result = "default.png";
+        }
+        return result;
+    }
+    async Task GetCommentsAsync()
+    {
+        comments = await _comment.GetCommentsAsync(episodeObj, take);
+    }
+    async Task GetCommentCountAsync()
+    {
+        commentCount = await _comment.GetCommentCountAsync(episodeObj);
+    }
+    async Task PostCommentAsync()
+    {
+        var content = await _js.InvokeAsync<string>("GetCommentContent");
+        if(content == null || content == "")
+        {
+            return;
+        }
+        await _comment.PostCommentAsync(episodeObj, user.Id, content);
+        await GetCommentsAsync();
+        await GetCommentCountAsync();
+    }
+    async Task IncrementTakeAsync()
+    {
+        take = take + 8;
+        await GetCommentsAsync();
+    }
+    string DisplayDate(DateTime posted)
+    {
+        int timePassed = (int)DateTime.Now.Subtract(posted).TotalSeconds;
+        var ext = "sec";
+        if (timePassed >= 60)
+        {
+            timePassed = (int)DateTime.Now.Subtract(posted).TotalMinutes;
+            ext = "min";
+            if (timePassed >= 60)
+            {
+                timePassed = (int)DateTime.Now.Subtract(posted).TotalHours;
+                ext = "h";
+                if (timePassed >= 24)
+                {
+                    timePassed = (int)DateTime.Now.Subtract(posted).TotalDays;
+                    ext = "d";
+                    if (timePassed >= 31)
+                    {
+                        timePassed = (int)((DateTime.Now.Subtract(posted).TotalDays) / 31);
+                        ext = "m";
+                        if (timePassed >= 12)
+                        {
+                            timePassed = (int)((DateTime.Now.Subtract(posted).TotalDays) / 365);
+                            ext = "y";
+                        }
+                    }
+                }
+            }
+        }
+        return timePassed.ToString() + " " + ext;
+    }
+}

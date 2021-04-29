@@ -1,0 +1,138 @@
+﻿@page "/show/{show}/{epindex}"
+@using Animulu.Components
+@model Animulu.Pages.EpisodeModel
+@{
+    ViewData["Title"] = Model.showObj.Title + " ep. " + RouteData.Values["epindex"];
+    ViewData["SubTitle"] = "Episode";
+    ViewData["Identity"] = "false";
+}
+@section Css {
+    <link href="/lib/dash.js-development/contrib/akamai/controlbar/controlbar.css" rel="stylesheet" />
+    <style>
+
+    </style>
+}
+<div class="row font-content">
+    <div class="col-md-9 col-12 ">
+        <div class="dash-video-player w-100 border-thin ">
+            <div class="videoContainer" id="videoContainer" value="@Model.episodeObj.VideoSrc">
+                <video preload="auto"> </video>
+                <div id="videoController" class="video-controller unselectable">
+                    <div id="playPauseBtn" class="btn-play-pause" title="Play/Pause">
+                        <span id="iconPlayPause" class="icon-play"></span>
+                    </div>
+                    <span id="videoTime" class="time-display d-none d-md-block">00:00</span>
+                    <div id="fullscreenBtn" class="btn-fullscreen control-icon-layout" title="Fullscreen">
+                        <span class="icon-fullscreen-enter"></span>
+                    </div>
+                    <div id="bitrateListBtn" class="control-icon-layout" title="Bitrate List">
+                        <span class="icon-bitrate"></span>
+                    </div>
+                    <input type="range" id="volumebar" class="volumebar d-none d-md-block" value="1" min="0" max="1" step=".01">
+                    <div id="muteBtn" class="btn-mute control-icon-layout" title="Mute">
+                        <span id="iconMute" class="icon-mute-off"></span>
+                    </div>
+                    <div id="trackSwitchBtn" class="control-icon-layout" title="A/V Tracks">
+                        <span class="icon-tracks"></span>
+                    </div>
+                    <div id="captionBtn" class="btn-caption control-icon-layout" title="Closed Caption">
+                        <span class="icon-caption"></span>
+                    </div>
+                    <span id="videoDuration" class="duration-display d-none d-md-block">00:00</span>
+                    <div class="seekContainer">
+                        <div id="seekbar" class="seekbar seekbar-complete">
+                            <div id="seekbar-buffer" class="seekbar seekbar-buffer"></div>
+                            <div id="seekbar-play" class="seekbar seekbar-play"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mt-2 w-100 px-0">
+            <div class="float-left">
+                <h5 class="mb-0 ">@Model.episodeObj.Title</h5>
+                <span class="text-grey font-weight-light font-content">@Model.Views views</span>
+            </div>
+            @(await Html.RenderComponentAsync<Likes>(RenderMode.ServerPrerendered,new { episodeObj = Model.episodeObj }))
+        </div>
+        <div class="col-12 px-0 py-1 border-ep-thin float-left">
+            <div class="col-12 px-0">
+            </div>
+        </div>
+        <div class="col-12 px-0 py-4 row mx-0">
+            <div class="col-md-2 col-6 px-0 p-1 ">
+                <img class="img-fluid shadow-out border-radius-light" src="/images/covers/@Model.showObj.CoverImg" />
+            </div>
+            <div class="col-md-10 col-6 pl-3">
+                <div class="pb-md-4 pb-2">
+                    <span class="text-muted ">
+                        Show <br />
+                    </span>
+                    <a class="text-grey" asp-page="/show" asp-route-show="@Model.showObj.Title.Replace(" ", "-")">
+                        @Model.showObj.Title
+                    </a>
+                </div>
+                <div class="pb-md-4 pb-2">
+                    <span class="text-muted">
+                        Episode <br />
+                    </span>
+                    <span class="text-grey">
+                        @Model.episodeObj.EpisodeIndex
+                    </span>
+                </div>
+                <div class="pb-md-4 pb-2">
+                    <span class="text-muted">
+                        Release Date <br />
+                    </span>
+                    <span class="text-grey">
+                        @Model.episodeObj.ReleaseDate.ToString("dd.MM.yyyy")
+                    </span>
+                </div>
+                <div>
+                    <span class="text-muted">
+                        Upload Date <br />
+                    </span>
+                    <span class="text-grey">
+                        @Model.episodeObj.UploadDate.ToString("dd.MM.yyyy")
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 bg-grey-dark pb-3 pt-2 px-3 my-3 border-radius-light">
+            @foreach (var t in Model.Tags)
+            {
+                <a asp-page="/search" asp-route-tag="@t.Name.Replace(" ","-")" asp-route-pageid="1" class="list-inline-item tag-display">@t.Name</a>
+            }
+            <br />
+            <span class="mt-3 mb-1 d-block">
+                @Model.episodeObj.Description
+            </span>
+        </div>
+    </div>
+    <div class="col-md-3 col-12">
+        <div class="col-12 px-0 border-ep-thin">
+            <div class="col-12 px-0">
+            </div>
+        </div>
+        @foreach (var e in Model.Episodes)
+        {
+            <a asp-page="/episode" asp-route-show="@Model.showObj.Title.Replace(" ","-")" asp-route-epindex="@e.EpisodeIndex">
+                <div class="col-12 py-4 pr-5 pl-4 border-ep-thin hover-light-grey active-grey @if (e.EpisodeIndex == Model.episodeObj.EpisodeIndex) { <text>bg-grey</text> } ">
+                    <div class="w-10 float-left text-center font-content">
+                        @e.EpisodeIndex
+                    </div>
+                    <div class="w-90 text-overflow-ellipsis overflow-hidden font-content">
+                        @e.Title
+                    </div>
+                </div>
+            </a>
+        }
+    </div>
+    @(await Html.RenderComponentAsync<Comments>(RenderMode.ServerPrerendered,new { episodeObj = Model.episodeObj }))
+</div>
+@section Scripts { 
+    <script src="/lib/dash.js-development/contrib/akamai/controlbar/ControlBar.js"></script>
+    <script src="/lib/dash.js-development/dash.all.min.js"></script>
+    <script src="~/js/player.js"></script>
+    <script src="_framework/blazor.server.js"></script>
+}

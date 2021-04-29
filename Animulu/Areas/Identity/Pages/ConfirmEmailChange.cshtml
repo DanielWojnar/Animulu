@@ -1,0 +1,13 @@
+﻿@page "/confirmemailchange"
+@model Animulu.Areas.Identity.Pages.ConfirmEmailChangeModel
+@{
+    ViewData["Title"] = "Confirm email change";
+    ViewData["SubTitle"] = "Confirm Email Change";
+    ViewData["Identity"] = "true";
+}
+<div class="row mt-5">
+    <h1 class="col-12 text-center">@ViewData["Title"]</h1>
+    <h4 class="col-12 text-center">
+        @Model.StatusMessage
+    </h4>
+</div>

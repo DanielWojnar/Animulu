@@ -1,0 +1,60 @@
+﻿@page "{show?}"
+@using Animulu.Components
+@model Animulu.Pages.ShowModel
+@{
+    ViewData["Title"] = Model.showObj.Title;
+    ViewData["SubTitle"] = "Show";
+    ViewData["Identity"] = "false";
+}
+<div class="row bg-grey p-3 my-2  shadow-out">
+    <div class="col-xl-7 col-12 text-center px-0 "><h1>@Model.showObj.Title</h1></div>
+    <div class="col-5 d-none d-xl-block pl-4 mt-auto"><h4>Episodes</h4></div>
+    <div class="col-xl-7 col-12 px-0 font-content ">
+        <div class="col-md-6 col-12 float-left px-0">
+            <img class="card-img border-thin" src="~/images/covers/@Model.showObj.CoverImg" />
+
+        </div>
+        <div class="col-md-6 col-12 float-left pr-0 pl-0 pl-md-3 pt-2 pt-md-0">
+            <div class="col-12 text-justify px-0 pb-2">
+                @Model.showObj.Description
+            </div>
+            <div class="col-12 px-0 py-2">
+                Release Date: <span class="font-weight-light">@Model.showObj.ReleaseDate.ToString("dd.MM.yyyy")</span>
+            </div>
+            <div class="col-12 px-0 py-2 pl-3 row">
+                @(await Html.RenderComponentAsync<Raitings>(RenderMode.ServerPrerendered,new { showObj = Model.showObj }))
+            </div>
+            <div class="col-12 px-0 py-2">
+                Tags:&nbsp
+                @foreach (var t in Model.Tags)
+                {
+                    <a asp-page="/search" asp-route-tag="@t.Name.Replace(" ","-")" asp-route-pageid="1" class="list-inline-item tag-display">@t.Name</a>
+                }
+            </div>
+
+        </div>
+    </div>
+    <div class="col-12 d-xl-none d-block pl-xl-4 mt-auto pl-0 pr-0 pt-xl-0 pt-3"><h1>Episodes</h1></div>
+    <div class="col-xl-5 col-12 pl-xl-4 pb-1 pr-xl-3 px-0 font-content">
+        <div class="col-12 px-0 border-ep-thin">
+            <div class="col-12 px-0">
+            </div>
+        </div>
+        @foreach (var e in Model.episodes)
+        {
+            <a asp-page="/episode" asp-route-show="@Model.showObj.Title.Replace(" ","-")" asp-route-epindex="@e.EpisodeIndex">
+                <div class="col-12 py-4 pr-5 pl-4 border-ep-thin hover-light-grey active-grey">
+                    <div class="w-10 float-left text-center">
+                        @e.EpisodeIndex
+                    </div>
+                    <div class="w-90 text-overflow-ellipsis overflow-hidden">
+                        @e.Title
+                    </div>
+                </div>
+            </a>
+        }
+    </div>
+</div>
+@section Scripts{ 
+    <script src="_framework/blazor.server.js"></script>
+}

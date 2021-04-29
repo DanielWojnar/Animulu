@@ -1,0 +1,33 @@
+﻿@page "/signup"
+@model Animulu.Areas.Identity.Pages.RegisterModel
+@{
+    ViewData["Title"] = "Sign Up";
+    ViewData["SubTitle"] = "Sign Up";
+    ViewData["Identity"] = "true";
+}
+<div class="row mt-5">
+    <div class="col-12">
+        <form asp-route-returnUrl="@Model.ReturnUrl" method="post" class="bg-grey p-4 col-xl-4 col-md-6 col-sm-8 col-12 mx-auto border-radius-light">
+            <h4>Sign Up</h4>
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group my-4">
+                <input asp-for="Input.Username" placeholder="Username" class="form-control bg-grey-dark border-grey-dark form-dark-fix" />
+                <span asp-validation-for="Input.Username" class="text-danger"></span>
+            </div>
+            <div class="form-group my-4">
+                <input asp-for="Input.Email" placeholder="Email" class="form-control bg-grey-dark border-grey-dark form-dark-fix" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group my-4">
+                <input asp-for="Input.Password" placeholder="Password" class="form-control bg-grey-dark border-grey-dark form-dark-fix" />
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+            <div class="form-group my-4">
+                <input asp-for="Input.ConfirmPassword" placeholder="Confirm Password" class="form-control bg-grey-dark border-grey-dark form-dark-fix" />
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-form">Sign Up</button>
+        </form>
+    </div>
+</div>

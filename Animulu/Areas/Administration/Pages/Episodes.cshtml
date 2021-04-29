@@ -1,0 +1,99 @@
+﻿@page "{pageid=1}"
+@model Animulu.Areas.Administration.Pages.EpisodesModel
+@{
+    ViewData["Title"] = "Administration";
+}
+<div class="row mb-2">
+    <div class="col-12 mt-5">
+        <form method="post" class="col-12 col-md-5 col-lg-3 mx-auto px-0">
+            <h4>Add new episode</h4>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="EpisodeAdd.ShowIdEp" placeholder="Show id" class="form-control bg-grey-dark border-grey-dark form-dark-fix my-2" />
+            <span asp-validation-for="EpisodeAdd.ShowIdEp" class="text-danger"></span>
+            <input asp-for="EpisodeAdd.EpisodeIndex" placeholder="Episode index" class="form-control bg-grey-dark border-grey-dark form-dark-fix my-2" />
+            <span asp-validation-for="EpisodeAdd.EpisodeIndex" class="text-danger"></span>
+            <input asp-for="EpisodeAdd.EpisodeTitle" placeholder="Title" class="form-control bg-grey-dark border-grey-dark form-dark-fix my-2" />
+            <span asp-validation-for="EpisodeAdd.EpisodeTitle" class="text-danger"></span>
+            <input asp-for="EpisodeAdd.VideoSrc" placeholder="Video source" class="form-control bg-grey-dark border-grey-dark form-dark-fix my-2" />
+            <span asp-validation-for="EpisodeAdd.VideoSrc" class="text-danger"></span>
+            <input asp-for="EpisodeAdd.Description" placeholder="Description" class="form-control bg-grey-dark border-grey-dark form-dark-fix my-2" />
+            <span asp-validation-for="EpisodeAdd.Description" class="text-danger"></span>
+            <input asp-for="EpisodeAdd.UploadDate" type="text" placeholder="Upload date &#34;dd-MM-yyyy&#34;" class="form-control bg-grey-dark border-grey-dark form-dark-fix mb-2" />
+            <span asp-validation-for="EpisodeAdd.UploadDate" class="text-danger"></span>
+            <input asp-for="EpisodeAdd.ReleaseDate" type="text" placeholder="Release date &#34;dd-MM-yyyy&#34;" class="form-control bg-grey-dark border-grey-dark form-dark-fix mb-2" />
+            <span asp-validation-for="EpisodeAdd.ReleaseDate" class="text-danger"></span>
+            <input name="showid" value="@Model.SearchShowId" class="d-none" />
+            <button asp-page-handler="Add" type="submit" class="btn btn-form float-right">Add <i class="fas fa-plus"></i></button>
+        </form>
+    </div>
+    <div class="mx-auto mt-3 table-responsive px-xl-5">
+        <h4>Data</h4>
+        <form class="col-12 px-0 mb-2">
+            <button class="btn button-box-highlight" type="submit">
+                <i class=" fas fa-search"></i>
+            </button>
+            <div id="searchWrapper" class="wrapper-search">
+                <input id="searchInput" type="search" name="showid" value="@if (Model.SearchShowId != 0) {<text>@Model.SearchShowId</text>} " placeholder="Search show id..." class="form-control search search-bar-grey">
+            </div>
+        </form>
+        <div class="table-scrollable scroll-purple">
+            <table class="table-sm flex table-dark table-bordered border table-striped col-12">
+                <thead>
+                    <tr>
+                        <th scope="col" class="px-3">#</th>
+                        <th scope="col" class="px-3">Show Id</th>
+                        <th scope="col" class="px-3">Episode Index</th>
+                        <th scope="col" class="px-3">Title</th>
+                        <th scope="col" class="px-3">Video Source</th>
+                        <th scope="col" class="px-3">Description</th>
+                        <th scope="col" class="px-3">Upload Date</th>
+                        <th scope="col" class="px-3">Release Date</th>
+                        <th scope="col" class="px-3"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.TabDatas.Count; i++)
+                    {
+                        <tr>
+                            <th scope="row" class="text-center cell-max-width">@((i + 1).ToString())</th>
+                            <td class="pl-2 cell-max-width">@Model.TabDatas[i].ShowId</td>
+                            <td class="pl-2 cell-max-width">@Model.TabDatas[i].EpisodeIndex</td>
+                            <td class="pl-2 cell-max-width">@Model.TabDatas[i].Title</td>
+                            <td class="pl-2 cell-max-width">@Model.TabDatas[i].VideoSrc</td>
+                            <td class="pl-2 cell-max-width">@Model.TabDatas[i].Description</td>
+                            <td class="pl-2 cell-max-width">@Model.TabDatas[i].UploadDate.ToString("dd.MM.yyyy")</td>
+                            <td class="pl-2 cell-max-width">@Model.TabDatas[i].ReleaseDate.ToString("dd.MM.yyyy")</td>
+                            <td>
+                                <form method="post">
+                                    <input asp-for="EpisodeRemoveId" value="@Model.TabDatas[i].Id" class="d-none" />
+                                    <input name="showid" value="@Model.SearchShowId" class="d-none" />
+                                    <button asp-page-handler="Remove" type="submit" class="btn btn-danger">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 text-white mb-2 mt-2 text-center">
+        <a asp-area="Administration" asp-page="/Episodes" asp-route-pageid="1" class="btn btn-square-grey-small font-content @if (Model.navPage.CurPage == 1 || Model.navPage.TotPages == 0) { <text>d-none</text> } ">
+            <i class="fas fa-angle-double-left"></i>
+        </a>
+        <a asp-area="Administration" asp-page="/Episodes" asp-route-pageid="@(Model.navPage.CurPage-1)" class="btn btn-square-grey-small font-content @if (Model.navPage.CurPage == 1 || Model.navPage.TotPages == 0) { <text>d-none</text> } ">
+            <i class="fas fa-angle-left"></i>
+        </a>
+        @for (int i = 0; i < Model.navPage.MaxPage; i++)
+        {
+            <a asp-area="Administration" asp-page="/Episodes" asp-route-pageid="@(Model.navPage.MinPage+i)" class="btn btn-square-grey-small font-content @if ((i + Model.navPage.MinPage) == Model.navPage.CurPage) {<text>bg-grey</text>} @if (i > 3) { <text>d-none-mobile</text> } ">
+                @(i+Model.navPage.MinPage)
+            </a>
+        }
+        <a asp-area="Administration" asp-page="/Episodes" asp-route-pageid="@(Model.navPage.CurPage+1)" class="btn btn-square-grey-small font-content @if (Model.navPage.CurPage == Model.navPage.TotPages || Model.navPage.TotPages == 0) { <text>d-none</text> } ">
+            <i class="fas fa-angle-right"></i>
+        </a>
+        <a asp-area="Administration" asp-page="/Episodes" asp-route-pageid="@(Model.navPage.TotPages)" class="btn btn-square-grey-small font-content @if (Model.navPage.CurPage == Model.navPage.TotPages || Model.navPage.TotPages == 0) { <text>d-none</text> } ">
+            <i class="fas fa-angle-double-right"></i>
+        </a>
+    </div>
+</div>

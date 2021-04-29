@@ -1,0 +1,70 @@
+﻿@page "{pageid=1}"
+@model Animulu.Areas.Administration.Pages.RolesModel
+@{
+    ViewData["Title"] = "Administration";
+}
+<div class="row mb-2">
+    <div class="col-12 mt-5">
+        <form method="post" class="col-12 col-md-5 col-lg-3 mx-auto px-0">
+            <h4>Assign role</h4>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="UserRoleAdd.Username" placeholder="Username" class="form-control bg-grey-dark border-grey-dark form-dark-fix my-2" />
+            <span asp-validation-for="UserRoleAdd.Username" class="text-danger"></span>
+            <input asp-for="UserRoleAdd.RoleName" placeholder="Role name" class="form-control bg-grey-dark border-grey-dark form-dark-fix my-2" />
+            <span asp-validation-for="UserRoleAdd.RoleName" class="text-danger"></span>
+            <button asp-page-handler="Add" type="submit" class="btn btn-form float-right">Add <i class="fas fa-plus"></i></button>
+        </form>
+    </div>
+    <div class="mx-auto mt-3 table-responsive-md">
+        <h4>Data</h4>
+        <div class="table-scrollable">
+            <table class="table-sm table-dark table-bordered border table-striped col-12">
+                <thead>
+                    <tr>
+                        <th scope="col" class="px-3">#</th>
+                        <th scope="col" class="px-3">Username</th>
+                        <th scope="col" class="px-3">Role</th>
+                        <th scope="col" class="px-3"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.TabDatas.Count; i++)
+                    {
+                        <tr>
+                            <th scope="row" class="text-center cell-max-width">@((i + 1).ToString())</th>
+                            <td class="pl-2 cell-max-width">@Model.TabDatas[i].Username</td>
+                            <td class="pl-2 cell-max-width">@Model.TabDatas[i].RoleName</td>
+                            <td>
+                                <form method="post">
+                                    <input asp-for="UserRoleRemove.UserId" value="@Model.TabDatas[i].UserId" class="d-none" />
+                                    <input asp-for="UserRoleRemove.RoleName" value="@Model.TabDatas[i].RoleName" class="d-none" />
+                                    <button asp-page-handler="Remove" type="submit" class="btn btn-danger">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 text-white mb-2 mt-2 text-center">
+        <a asp-area="Administration" asp-page="/Roles" asp-route-pageid="1" class="btn btn-square-grey-small font-content @if (Model.navPage.CurPage == 1 || Model.navPage.TotPages == 0) { <text>d-none</text> } ">
+            <i class="fas fa-angle-double-left"></i>
+        </a>
+        <a asp-area="Administration" asp-page="/Roles" asp-route-pageid="@(Model.navPage.CurPage-1)" class="btn btn-square-grey-small font-content @if (Model.navPage.CurPage == 1 || Model.navPage.TotPages == 0) { <text>d-none</text> } ">
+            <i class="fas fa-angle-left"></i>
+        </a>
+        @for (int i = 0; i < Model.navPage.MaxPage; i++)
+        {
+            <a asp-area="Administration" asp-page="/Roles" asp-route-pageid="@(Model.navPage.MinPage+i)" class="btn btn-square-grey-small font-content @if ((i + Model.navPage.MinPage) == Model.navPage.CurPage) {<text>bg-grey</text>} @if (i > 3) { <text>d-none-mobile</text> } ">
+                @(i+Model.navPage.MinPage)
+            </a>
+        }
+        <a asp-area="Administration" asp-page="/Roles" asp-route-pageid="@(Model.navPage.CurPage+1)" class="btn btn-square-grey-small font-content @if (Model.navPage.CurPage == Model.navPage.TotPages || Model.navPage.TotPages == 0) { <text>d-none</text> } ">
+            <i class="fas fa-angle-right"></i>
+        </a>
+        <a asp-area="Administration" asp-page="/Roles" asp-route-pageid="@(Model.navPage.TotPages)" class="btn btn-square-grey-small font-content @if (Model.navPage.CurPage == Model.navPage.TotPages || Model.navPage.TotPages == 0) { <text>d-none</text> } ">
+            <i class="fas fa-angle-double-right"></i>
+        </a>
+    </div>
+</div>

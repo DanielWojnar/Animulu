@@ -1,0 +1,33 @@
+﻿@using Microsoft.AspNetCore.Http.Features
+
+@{
+    var consentFeature = Context.Features.Get<ITrackingConsentFeature>();
+    var showBanner = !consentFeature?.CanTrack ?? false;
+    var cookieString = consentFeature?.CreateConsentCookie();
+}
+
+@if (showBanner)
+{
+    <div id="cookieOverlay" class="overlay active"></div>
+    <div id="cookieConsent" class="bg-purple text-white w-100 py-md-3 py-2 text-justify px-xl-4 px-2" role="alert">
+        What are cookies?
+        Cookies are simple text files that are stored on your computer or mobile device by a website’s
+        server. Each cookie is unique to your web browser. It will contain some anonymous information
+        such as a unique identifier, website’s domain name, and some digits and numbers.
+        Necessary cookies allow us to offer you the best possible experience when accessing and
+        navigating through our website and using its features. For example, these cookies let us
+        recognize that you have created an account and have logged into that account. <a asp-page="/Privacy">Learn More</a>.
+        <button type="button" class="btn btn-form bg-primary float-right mt-2 col-xl-2 col-lg-3 col-md-4 col-sm-5 col-12" data-dismiss="alert" aria-label="Close" data-cookie-string="@cookieString">
+            <span class="my-md-1 mb-0 mx-md-1 " aria-hidden="true">Accept</span>
+        </button>
+    </div>
+    <script>
+        (function () {
+            var button = document.querySelector("#cookieConsent button[data-cookie-string]");
+            button.addEventListener("click", function (event) {
+                document.cookie = button.dataset.cookieString;
+                $('#cookieOverlay,#cookieConsent').addClass('d-none');
+            }, false);
+        })();
+    </script>
+}

@@ -1,0 +1,13 @@
+﻿@page "/lockout"
+@model Animulu.Areas.Identity.Pages.LockoutModel
+@{
+    ViewData["Title"] = "Locked Out";
+    ViewData["SubTitle"] = "Locked Out";
+    ViewData["Identity"] = "true";
+}
+<div class="row mt-5">
+    <h1 class="col-12 text-danger text-center">@ViewData["Title"]</h1>
+    <h4 class="col-12 text-center text-danger">
+        This account has been locked out, please try again later.
+    </h4>
+</div>

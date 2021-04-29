@@ -1,0 +1,45 @@
+﻿@page "/signin"
+@model Animulu.Areas.Identity.Pages.LoginModel
+@{
+    ViewData["Title"] = "Sign In";
+    ViewData["SubTitle"] = "Sign In";
+    ViewData["Identity"] = "true";
+}
+<div class="row mt-5">
+    <div class="col-12">
+        <section>
+            <form id="account" method="post" class="bg-grey p-4 col-xl-4 col-md-6 col-sm-8 col-12 mx-auto border-radius-light">
+                <h4>Sign In</h4>
+                <hr />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group my-4">
+                    <input asp-for="Input.Username" placeholder="Username" class="form-control bg-grey-dark border-grey-dark form-dark-fix" />
+                    <span asp-validation-for="Input.Username" class="text-danger"></span>
+                </div>
+                <div class="form-group my-4">
+                    <input asp-for="Input.Password" placeholder="Password" class="form-control bg-grey-dark border-grey-dark form-dark-fix" />
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label asp-for="Input.RememberMe">
+                            <input asp-for="Input.RememberMe" />
+                            @Html.DisplayNameFor(m => m.Input.RememberMe)
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group ">
+                    <button type="submit" class="btn btn-form">Sign In</button>
+                </div>
+                <div class="form-group">
+                    <p>
+                        <a id="forgot-password" asp-page="./ForgotPassword" class="label-click-purple-dark">Forgot your password?</a>
+                    </p>
+                    <p>
+                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="label-click-purple-dark">Sign Up</a>
+                    </p>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>

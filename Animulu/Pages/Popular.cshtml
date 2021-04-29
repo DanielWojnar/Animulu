@@ -1,0 +1,79 @@
+﻿@page "{pageid=1:int}"
+@model Animulu.Pages.PopularModel
+@{
+    ViewData["Title"] = "Popular";
+    ViewData["SubTitle"] = "Popular";
+    ViewData["Identity"] = "false";
+}
+<div class="row text-center justify-content-center ">
+    @if (Model.Shows.Count() > 0)
+    {
+        @foreach (var s in Model.Shows)
+        {
+            <div class=" col-4 col-sm-3 col-md-3 col-lg-2 shadow-out-s card p-0 bg-grey m-2">
+                <a asp-page="/show" asp-route-show="@s.Title.Replace(" ", "-")"><span class="card-href"></span></a>
+                <img class="card-img-top" src="~/images/covers/@s.CoverImg">
+                <div class="card-shadow"></div>
+                <div class="card-body py-2 px-2 d-flex flex-column justify-content-center ">
+                    <div>
+                        <div class="card-show-fix"></div>
+                        <h5 class="card-title pb-0 mb-1">
+                            @if (s.Title.Length >= 50)
+                            {
+                                @($"{s.Title.Remove(47)}...");
+                            }
+                            else
+                            {
+                                @s.Title
+                            }
+                        </h5>
+                        <p class="card-text text-muted p-0 mb-0">
+                            <span class="d-block">
+                                @for (float i = 1; i < 6; i++)
+                                {
+                                    if (s.Score >= i)
+                                    {
+                                        <i class="fas fa-star star-fill"></i>
+                                    }
+                                    else if (s.Score < i && s.Score >= (i - 0.5))
+                                    {
+                                        <i class="fas fa-star star-half"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-star star-empty"></i>
+                                    }
+                                }
+                            </span>
+                        </p>
+                        <div class="card-show-fix"></div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <h1 class="col-12 text-center m-2">No results found.</h1>
+    }
+    <div class="col-12 text-white mb-2 mt-1">
+        <a asp-page="/popular" asp-route-pageid="1" class="btn btn-square-grey-small font-content @if (Model.navPage.CurPage == 1 || Model.navPage.TotPages == 0) { <text>d-none</text> } ">
+            <i class="fas fa-angle-double-left"></i>
+        </a>
+        <a asp-page="/popular" asp-route-pageid="@(Model.navPage.CurPage-1)" class="btn btn-square-grey-small font-content @if (Model.navPage.CurPage == 1 || Model.navPage.TotPages == 0) { <text>d-none</text> } ">
+            <i class="fas fa-angle-left"></i>
+        </a>
+        @for (int i = 0; i < Model.navPage.MaxPage; i++)
+        {
+            <a asp-page="/popular" asp-route-pageid="@(Model.navPage.MinPage+i)" class="btn btn-square-grey-small font-content @if ((i + Model.navPage.MinPage) == Model.navPage.CurPage) {<text>bg-grey</text>} @if (i > 3) { <text>d-none-mobile</text> } ">
+                @(i+Model.navPage.MinPage)
+            </a>
+        }
+        <a asp-page="/popular" asp-route-pageid="@(Model.navPage.CurPage+1)" class="btn btn-square-grey-small font-content @if (Model.navPage.CurPage == Model.navPage.TotPages || Model.navPage.TotPages == 0) { <text>d-none</text> } ">
+            <i class="fas fa-angle-right"></i>
+        </a>
+        <a asp-page="/popular" asp-route-pageid="@(Model.navPage.TotPages)" class="btn btn-square-grey-small font-content @if (Model.navPage.CurPage == Model.navPage.TotPages || Model.navPage.TotPages == 0) { <text>d-none</text> } ">
+            <i class="fas fa-angle-double-right"></i>
+        </a>
+    </div>
+</div>

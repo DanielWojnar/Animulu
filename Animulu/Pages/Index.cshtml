@@ -1,0 +1,240 @@
+﻿@page 
+@model IndexModel
+@{
+    ViewData["Title"] = "Watch Anime as you like";
+    ViewData["SubTitle"] = "Home";
+    ViewData["Identity"] = "false";
+}
+@if (Model.FeaturedShow != null)
+{
+<div class="row">
+    <header class="col-12 text-center text-wholescreen overflow-hidden">
+        <div class="homescreen-center text-center w-100">
+            <h1 class="py-2">Watch your favorites Anime </h1>
+            <h1 class="h4 py-2">For <b>free</b>. With <b>no ads</b>. In <b>high quality</b>. </h1>
+            <h1 class="h5 py-2">On <b>any device</b> you like. As you <b>like</b>. </h1>
+            <i class="fas fa-arrow-down p-2 mt-3"></i>
+            <b><i class="fas fa-arrow-down p-2"></i></b>
+            <i class="fas fa-arrow-down p-2"></i>
+        </div>
+        <h2 class="col-12 font-weight-light px-2 featured-label">Featured Series</h2>
+    </header>
+    <content class="col-12 featured-border-bottom">
+        <div class="row shadow-out">
+            <div class="col-12 col-md-6 featured-border pr-md-2 mr-md-0 pl-md-3">
+                <img class="img-fluid d-block mx-auto pr-0 featured-img " src="~/images/covers/@Model.FeaturedShow.CoverImg" />
+            </div>
+            <aside class="col-12 col-md-6 pt-3 ml-md-0 px-md-3 px-4 text-center d-flex flex-column ">
+                <h2 class="h1 pb-0 pb-md-2 featured-title">@Model.FeaturedShow.Title</h2>
+                <div class="my-2">
+                    <div class="text-justify font-weight-light featured-description">
+                        @Model.FeaturedShow.Description
+                    </div>
+                </div>
+            </aside>
+            <div class="col-12 pb-3 pt-0 pt-md-1 text-center ">
+                <div>
+                    <ul class="list-inline">
+                        @foreach (var t in Model.FeaturedTags)
+                        {
+                            <a asp-page="/search" asp-route-tag="@t.Name.Replace(" ", "-")" asp-route-pageid="1" class="list-inline-item tag-display">@t.Name</a>
+                        }
+                    </ul>
+                </div>
+                <a asp-page="/show" asp-route-show="@Model.FeaturedShow.Title.Replace(" ", "-")" class="mt-auto mx-auto btn btn-square-box-purple">Watch Now</a>
+            </div>
+        </div>
+    </content>
+</div>
+}
+<div class="row mt-5">
+    <div class="container-fluid scroll-horizontal ">
+        <div class="row text-left mt-5 mb-2">
+            <h2 class="w-100 ml-2 font-weight-light">Recently Uploaded Episodes</h2>
+        </div>
+        <div class="row text-center mt-0 mb-5 slider">
+            <button class="position-absolute slider-a slider-al p-0 m-0 border-0 btn "><i class="fas fa-arrow-left"></i></button>
+            <button class="position-absolute slider-a slider-ar p-0 m-0 border-0 btn"><i class="fas fa-arrow-right"></i></button>
+            @foreach (var e in Model.UploadEpisodes)
+            {
+                <div class=" shadow-out-s card card-width p-0 bg-grey mx-2  my-2">
+                    <a asp-page="/episode" asp-route-show="@e.ShowTitle.Replace(" ","-")" asp-route-epindex="@e.EpisodeIndex"><span class="card-href"></span></a>
+                    <img class="card-img-top" src="~/images/covers/@e.CoverImg">
+                    <div class="card-shadow"></div>
+                    <div class="card-body py-2 px-2 d-flex flex-column justify-content-center">
+                        <div>
+                            <h5 class="card-title pb-0 mb-1">
+                                @if (e.ShowTitle.Length >= 50)
+                                {
+                                    @($"{e.ShowTitle.Remove(47)}...");
+                                }
+                                else
+                                {
+                                    @e.ShowTitle
+                                }
+                            </h5>
+                            <div class="card-text card-text-separator">
+                                <span class="d-block text-white-50">Episode @e.EpisodeIndex</span>
+                            </div>
+                            <p class="card-text card-text-absolute text-muted p-0 mb-0 position-absolute">
+
+                                <span class="d-block"><i class="fas fa-eye"></i> @e.Views.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("de"))</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div style="width:1px;height:1px; display:inline-block; opacity:0; font-size:1px; margin:0px; padding: 0px;">.</div>
+        </div>
+    </div>
+    <div class="container-fluid scroll-horizontal ">
+        <div class="row text-left mt-5 mb-2">
+            <h2 class="w-100 ml-2 font-weight-light">Recently Released Episodes</h2>
+        </div>
+        <div class="row text-center mt-0 mb-5 slider">
+            <button class="position-absolute slider-a slider-al p-0 m-0 border-0 btn "><i class="fas fa-arrow-left"></i></button>
+            <button class="position-absolute slider-a slider-ar p-0 m-0 border-0 btn"><i class="fas fa-arrow-right"></i></button>
+            @foreach (var e in Model.ReleasedEpisodes)
+            {
+                <div class=" shadow-out-s card card-width p-0 bg-grey mx-2  my-2">
+                    <a asp-page="/episode" asp-route-show="@e.ShowTitle.Replace(" ","-")" asp-route-epindex="@e.EpisodeIndex"><span class="card-href"></span></a>
+                    <img class="card-img-top " src="~/images/covers/@e.CoverImg">
+                    <div class="card-shadow"></div>
+                    <div class="card-body py-2 px-2 d-flex flex-column justify-content-center ">
+                        <div>
+                            <h5 class="card-title pb-0 mb-1">
+                                @if (e.ShowTitle.Length >= 50)
+                                {
+                                    @($"{e.ShowTitle.Remove(47)}...");
+                                }
+                                else
+                                {
+                                    @e.ShowTitle
+                                }
+                            </h5>
+                            <div class="card-text card-text-separator">
+                                <span class="d-block text-white-50">Episode @e.EpisodeIndex</span>
+                            </div>
+                            <p class="card-text card-text-absolute text-muted p-0 mb-0 position-absolute">
+                                <span class="d-block">
+                                    <i class="fas fa-eye"></i> @e.Views.ToString("N0",System.Globalization.CultureInfo.GetCultureInfo("de"))
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div style="width:1px;height:1px; display:inline-block; opacity:0; font-size:1px; margin:0px; padding: 0px;">.</div>
+        </div>
+    </div>
+    <div class="container-fluid scroll-horizontal ">
+        <div class="row text-left mt-5 mb-2">
+            <h2 class="w-100 ml-2 font-weight-light">Popular Shows</h2>
+        </div>
+        <div class="row text-center mt-0 mb-5 slider">
+            <button class="position-absolute slider-a slider-al p-0 m-0 border-0 btn "><i class="fas fa-arrow-left"></i></button>
+            <button class="position-absolute slider-a slider-ar p-0 m-0 border-0 btn"><i class="fas fa-arrow-right"></i></button>
+            @foreach (var s in Model.PopularShows)
+            {
+
+                <div class=" shadow-out-s card card-width p-0 bg-grey mx-2  my-2">
+                    <a asp-page="/show" asp-route-show="@s.Title.Replace(" ","-")"><span class="card-href"></span></a>
+                    <img class="card-img-top" src="~/images/covers/@s.CoverImg">
+                    <div class="card-shadow"></div>
+                    <div class="card-body py-2 px-2 d-flex flex-column justify-content-center ">
+                        <div>
+                            <div class="card-show-fix"></div>
+                            <h5 class="card-title pb-0 mb-1">
+                                @if (s.Title.Length >= 50)
+                                {
+                                    @($"{s.Title.Remove(47)}...");
+                                }
+                                else
+                                {
+                                    @s.Title
+                                }
+                            </h5>
+                            <p class="card-text text-muted p-0 mb-0">
+                                <span class="d-block">
+                                    @for (float i = 1; i < 6; i++)
+                                    {
+                                        if (s.Score >= i)
+                                        {
+                                            <i class="fas fa-star star-fill"></i>
+                                        }
+                                        else if (s.Score < i && s.Score >= (i - 0.5))
+                                        {
+                                            <i class="fas fa-star star-half"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-star star-empty"></i>
+                                        }
+                                    }
+                                </span>
+                            </p>
+                            <div class="card-show-fix"></div>
+                        </div>
+                    </div>
+                </div>
+
+            }
+            <div style="width:1px;height:1px; display:inline-block; opacity:0; font-size:1px; margin:0px; padding: 0px;">.</div>
+        </div>
+    </div>
+    <div class="container-fluid scroll-horizontal ">
+        <div class="row text-left mt-5 mb-2">
+            <h2 class="w-100 ml-2 font-weight-light">Random Shows</h2>
+        </div>
+        <div class="row text-center mt-0 mb-5 slider">
+            <button class="position-absolute slider-a slider-al p-0 m-0 border-0 btn "><i class="fas fa-arrow-left"></i></button>
+            <button class="position-absolute slider-a slider-ar p-0 m-0 border-0 btn"><i class="fas fa-arrow-right"></i></button>
+            @foreach (var s in Model.RandomShows)
+            {
+
+                <div class=" shadow-out-s card card-width p-0 bg-grey mx-2  my-2">
+                    <a asp-page="/show" asp-route-show="@s.Title.Replace(" ","-")"><span class="card-href"></span></a>
+                    <img class="card-img-top" src="~/images/covers/@s.CoverImg">
+                    <div class="card-shadow"></div>
+                    <div class="card-body py-2 px-2 d-flex flex-column justify-content-center ">
+                        <div>
+                            <div class="card-show-fix"></div>
+                            <h5 class="card-title pb-0 mb-1">
+                                @if (s.Title.Length >= 50)
+                                {
+                                    @($"{s.Title.Remove(47)}...");
+                                }
+                                else
+                                {
+                                    @s.Title
+                                }
+                            </h5>
+                            <p class="card-text text-muted p-0 mb-0">
+                                <span class="d-block">
+                                    @for (float i = 1; i < 6; i++)
+                                    {
+                                        if (s.Score >= i)
+                                        {
+                                            <i class="fas fa-star star-fill"></i>
+                                        }
+                                        else if (s.Score < i && s.Score >= (i - 0.5))
+                                        {
+                                            <i class="fas fa-star star-half"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-star star-empty"></i>
+                                        }
+                                    }
+                                </span>
+                            </p>
+                            <div class="card-show-fix"></div>
+                        </div>
+                    </div>
+                </div>
+
+            }
+            <div style="width:1px;height:1px; display:inline-block; opacity:0; font-size:1px; margin:0px; padding: 0px;">.</div>
+        </div>
+    </div>
+</div> 

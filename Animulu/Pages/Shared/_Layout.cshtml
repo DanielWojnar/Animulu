@@ -1,0 +1,144 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Animulu.Models
+@inject SignInManager<AnimuluUser> signInManager
+@inject UserManager<AnimuluUser> userManager
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="~/" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <title>@ViewData["Title"] - Animulu</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/lib/malihu-custom-scrollbar-plugin/dist/css/jquery.mCustomScrollbar.min.css">
+    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" />
+    @RenderSection("Css", required: false)
+</head>
+<body>
+    <partial name="_CookieConsentPartial" />
+    <div id="LoginPopOverlay" class="overlay"></div>
+    <div id="LoginPop" class="loginPop bg-purple-light col-xl-3 col-md-6 col-sm-8 col-10 pb-4 px-0 border-radius-light">
+        <div class="text-white col-12 py-3 mb-4 bg-purple pl-4">
+            <h4 class="mb-0">Sign In Required</h4>
+        </div>
+        <button id="LoginPopClose" class="btn button-circle position-absolute">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class=" float-left col-6 text-center mx-0 px-0 py-3">
+            <a class="btn-square-purple" asp-area="Identity" asp-page="/Login" asp-route-returnUrl="@if (ViewData["Identity"].ToString() == "true") {<text>/home</text>} else { <text>@Url.RouteUrl(ViewContext.RouteData.Values)</text> }">Sign In</a>
+        </div>
+        <div class="float-left text-center col-6 mx-0 px-0 py-3">
+            <a class="btn-square-purple" asp-area="Identity" asp-page="/Register" asp-route-returnUrl="@if (ViewData["Identity"].ToString() == "true") {<text>/home</text>} else { <text>@Url.RouteUrl(ViewContext.RouteData.Values)</text> }">Sign Up</a>
+        </div>
+    </div>
+    <header>
+        <nav id="topBar" class="navbar fixed-top justify-content-start pr-sm-4 pr-0">
+            <button class="btn button-circle" id="sidebarCollapse">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a class="navbar-brand ml-2 ml-md-5 mr-0 mr-md-3 button-glow" href="/">Animulu</a>
+            <span class="navbar-text pl-4 ml-3 d-none d-lg-inline-block">@ViewData["SubTitle"]</span>
+
+            <form id="searchForm" method="get" asp-page="/search" asp-route-pageid="1" class="mx-auto">
+                <button class="btn button-box-highlight" type="submit">
+                    <i class=" fas fa-search"></i>
+                </button>
+                <div id="searchWrapper" class="wrapper-search">
+                    <input id="searchInput" type="search" name="quote" value="" placeholder="Search.." class="form-control search search-bar-grey">
+                </div>
+                <input id="orderBox" type="checkbox" name="order" value="" class="d-none" />
+                <input id="tagBox" type="checkbox" name="tag" value="" class="d-none" />
+            </form>
+            @if (signInManager.IsSignedIn(User))
+            {
+                <a id="signIn" class="navbar-text ml-0 ml-md-4 btn-square-grey d-none d-sm-block" asp-area="Identity" asp-page="/Account/Index">@User.Identity.Name 
+                    <div class="overflow-hidden float-right ml-2" style="height:24px;width:24px;">
+                        <img class="object-fit-cover" style="width: 24px; height: 24px; margin-bottom:5px;" src="~/images/avatars/@if ((await userManager.GetUserAsync(User)).ProfilePicExist) {<text>@((await userManager.GetUserAsync(User)).ProfilePicName+".png")</text>} else {<text>default.png</text>}" />
+                    </div>
+                </a>
+                <a id="signUp" class="navbar-text ml-5 mr-3 d-none d-lg-inline-block btn-square-grey" asp-area="Identity" asp-page="/Logout" asp-route-returnUrl="@if (ViewData["Identity"].ToString() == "true") {<text>/home</text>} else { <text>@Url.RouteUrl(ViewContext.RouteData.Values)</text> }">Sign Out</a>
+            }
+            else
+            {
+                <a id="signIn" class="navbar-text ml-0 ml-md-4 btn-square-grey d-none d-sm-block" asp-area="Identity" asp-page="/Login" asp-route-returnUrl="@if (ViewData["Identity"].ToString() == "true") {<text>/home</text>} else { <text>@Url.RouteUrl(ViewContext.RouteData.Values)</text> }">Sign In</a>
+                <a id="signUp" class="navbar-text ml-5 mr-3 d-none d-lg-inline-block btn-square-grey" asp-area="Identity" asp-page="/Register" asp-route-returnUrl="@if (ViewData["Identity"].ToString() == "true") {<text>/home</text>} else { <text>@Url.RouteUrl(ViewContext.RouteData.Values)</text> }">Sign Up</a>
+            }
+        </nav>
+    </header>
+    <aside>
+        <nav class="d-block " id="sidebar">
+            <button class="btn button-circle float-right mr-3 my-3" id="dismiss">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="ml-3 my-3 text-glow">
+                <h3>Animulu</h3>
+            </div>
+            <ul class="border-top py-2 list-unstyled list-group list-sidebar">
+                <a href="/" class="list-group-item list-group-item-action @if (ViewData["SubTitle"].ToString() == "Home") { <text>active</text> }"><i class="fas fa-home mr-2 sidebar-icon"></i>Home</a>
+                <a asp-page="/Popular" class="list-group-item list-group-item-action @if (ViewData["SubTitle"].ToString() == "Popular") { <text>active</text> }"><i class="fas fa-fire-alt mr-2 sidebar-icon"></i>Popular</a>
+                <a asp-page="/Search" class="list-group-item list-group-item-action @if (ViewData["SubTitle"].ToString() == "Search") { <text>active</text> }"><i class=" fas fa-search mr-2 sidebar-icon"></i>Search</a>
+                <a asp-page="/App" class="list-group-item list-group-item-action @if (ViewData["SubTitle"].ToString() == "Mobile App") { <text>active</text> }"><i class="fas fa-mobile-alt mr-2 sidebar-icon"></i>Mobile App</a>
+            </ul>
+            <ul class="border-top py-2 list-unstyled list-group list-sidebar">
+                @if (signInManager.IsSignedIn(User))
+                {
+                    <a asp-area="Identity" asp-page="/Account/Index" class="list-group-item list-group-item-action @if (ViewData["SubTitle"].ToString() == "Account") { <text>active</text> }"><i class="fas fa-user-cog mr-2 sidebar-icon"></i>@User.Identity.Name</a>
+                    <a asp-area="Identity" asp-page="/Logout" asp-route-returnUrl="@if (ViewData["Identity"].ToString() == "true") {<text>/home</text>} else { <text>@Url.RouteUrl(ViewContext.RouteData.Values)</text> }" class="list-group-item list-group-item-action @if (ViewData["SubTitle"].ToString() == "Sign Out") { <text>active</text> }"><i class="fas fa-user-times mr-2 sidebar-icon"></i>Sign Out</a>
+                }
+                else
+                {
+                    <a asp-area="Identity" asp-page="/Login" asp-route-returnUrl="@if (ViewData["Identity"].ToString() == "true") {<text>/home</text>} else { <text>@Url.RouteUrl(ViewContext.RouteData.Values)</text> }" class="list-group-item list-group-item-action @if (ViewData["SubTitle"].ToString() == "Sign In") { <text>active</text> }"><i class="fas fa-user mr-2 sidebar-icon"></i>Sign In</a>
+                    <a asp-area="Identity" asp-page="/Register" asp-route-returnUrl="@if (ViewData["Identity"].ToString() == "true") {<text>/home</text>} else { <text>@Url.RouteUrl(ViewContext.RouteData.Values)</text> }" class="list-group-item list-group-item-action @if (ViewData["SubTitle"].ToString() == "Sign Up") { <text>active</text> }"><i class="fas fa-user-plus mr-2 sidebar-icon"></i>Sign Up</a>
+                }
+            </ul>
+            <ul class="border-top py-2 list-unstyled list-group list-sidebar">
+                <li class="list-group-item list-group-item-action">
+                    <a href="#socialMediaSubmenu" data-toggle="collapse" aria-expanded="true" class="">
+                        <i class="fas fa-users mr-2 sidebar-icon"></i>Social Media
+                    </a>
+                    <ul class="list-group collapse show" id="socialMediaSubmenu">
+                        <a href="https://www.facebook.com/" target="_blank" class="list-group-item list-group-item-action"><i class="fab fa-facebook-square mr-2 sidebar-icon"></i>Facebook</a>
+                        <a href="https://www.instagram.com/" target="_blank" class="list-group-item list-group-item-action"><i class="fab fa-instagram mr-2 sidebar-icon"></i>Instagram</a>
+                        <a href="https://reddit.com/" target="_blank" class="list-group-item list-group-item-action"><i class="fab fa-reddit mr-2 sidebar-icon"></i>Reddit</a>
+                        <a href="https://discord.com/" target="_blank" class="list-group-item list-group-item-action"><i class="fab fa-discord mr-2 sidebar-icon"></i>Discord</a>
+                    </ul>
+                </li>
+                <a asp-page="/Contact" class="list-group-item list-group-item-action @if (ViewData["SubTitle"].ToString() == "Contact") { <text>active</text> }"><i class="far fa-envelope mr-2 sidebar-icon"></i>Contact</a>
+            </ul>
+            <ul class="border-top mb-5 py-2 list-unstyled list-group list-sidebar">
+                <a asp-page="/Cookies" class="list-group-item list-group-item-action @if (ViewData["SubTitle"].ToString() == "Cookies") { <text>active</text> }"><i class="fas fa-cookie mr-2 sidebar-icon"></i>Cookies</a>
+                <a asp-page="/Privacy" class="list-group-item list-group-item-action @if (ViewData["SubTitle"].ToString() == "Privacy") { <text>active</text> }"><i class="fas fa-user-secret mr-2 sidebar-icon"></i>Privacy</a>
+            </ul>
+        </nav>
+        <div id="aside-overlay" class="overlay"></div>
+    </aside>
+    <main class="widescreen-padding overflow-hidden position-relative ">
+        <partial name="_BgImage" />
+        <div class="container-fluid">
+            @RenderBody()
+        </div>
+    </main>
+    <footer class="footer position-relative">
+        <div class="container-fluid">
+            <div class="row border-top">
+                <div class="col-11 offset-1 my-2">
+                    <span>&copy; 2021 - Animulu - </span>
+                    <a asp-page="/Privacy" class="text-onhover">Privacy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/malihu-custom-scrollbar-plugin/dist/js/jquery.mCustomScrollbar.min.js"></script>
+    <script src="~/lib/css-element-queries/js/ResizeSensor.js"></script>
+    <script src="~/lib/css-element-queries/js/ElementQueries.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <partial name="_ValidationScriptsPartial" />
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

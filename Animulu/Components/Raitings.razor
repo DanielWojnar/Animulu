@@ -1,0 +1,88 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Animulu.Models;
+@using Animulu.Services;
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Http
+@using Microsoft.JSInterop
+@inject RatingService _rating
+@inject UserManager<AnimuluUser> _userManager
+@inject SignInManager<AnimuluUser> _signInManager
+@inject IHttpContextAccessor _iHttpCA
+@inject IJSRuntime _js
+<div class="">
+    <div class="bg-purple text-center border-radius-light px-1">Score</div>
+    <h4 class="text-center mb-0 px-1">@Rating.ToString("0.00")</h4>
+    <div class="text-center font-content font-weight-light px-1">@Count.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("de")) users</div>
+</div>
+<div class="star-font ml-2 my-auto">
+    @for (int i = 1; i < 6; i++)
+    {
+        var currstar = i;
+        if (personalR == 0)
+        {
+            <button class="btn p-0 star-font" @onclick="(async () => await PostRatingAsync(currstar))">
+                <i class="far fa-star star-empty"></i>
+            </button>
+        }
+        else
+        {
+            if (personalR < i)
+            {
+                <button class="btn p-0 star-font" @onclick="(async () => await PostRatingAsync(currstar))">
+                    <i class="fas fa-star star-empty"></i>
+                </button>
+            }
+            else
+            {
+                <button class="btn p-0 star-font" @onclick="(async () => await PostRatingAsync(currstar))">
+                    <i class="fas fa-star star-fill "></i>
+                </button>
+            }
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Show showObj { get; set; }
+    float Rating;
+    int personalR;
+    int Count;
+    protected override async Task OnInitializedAsync()
+    {
+        if (_signInManager.IsSignedIn(_iHttpCA.HttpContext.User)){
+            var userR = await _rating.GetRatingAsync(showObj, await _userManager.GetUserAsync(_iHttpCA.HttpContext.User));
+            if(userR != null)
+            {
+                personalR = userR.Value;
+            }
+            else
+            {
+                personalR = 0;
+            }
+        }
+        else
+        {
+            personalR = 0;
+        }
+        await GetRatingAsync();
+    }
+
+    async Task GetRatingAsync()
+    {
+        Count = await _rating.GetRatingAmoutAsync(showObj);
+        Rating = await _rating.GetRatingAsync(showObj);
+    }
+
+    async Task PostRatingAsync(int score)
+    {
+        if (!_signInManager.IsSignedIn(_iHttpCA.HttpContext.User))
+        {
+            await _js.InvokeVoidAsync("LoginPopUp");
+            return;
+        }
+        await _rating.PostRatingAsync(showObj, score, await _userManager.GetUserAsync(_iHttpCA.HttpContext.User));
+        personalR = score;
+        await GetRatingAsync();
+    }
+}

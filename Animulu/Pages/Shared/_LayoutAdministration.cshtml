@@ -1,0 +1,53 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Animulu.Models
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="~/" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <title>@ViewData["Title"] - Animulu</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/lib/malihu-custom-scrollbar-plugin/dist/css/jquery.mCustomScrollbar.min.css">
+    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" />
+    @RenderSection("Css", required: false)
+</head>
+<body>
+    <partial name="_CookieConsentPartial" />
+    <header>
+        <nav class="navbar fixed-top navbar-sticky justify-content-start pr-sm-4 pr-0 bg-purple shadow">
+            <a class="navbar-brand ml-2 ml-md-5 mr-0 mr-md-3 button-glow" href="/">Animulu</a>
+            <a asp-area="Administration" asp-page="/Index" class="navbar-text mx-2 btn-square-purple d-block">Shows</a>
+            <a asp-area="Administration" asp-page="/Episodes" class="navbar-text mx-2 d-inline-block btn-square-purple">Episodes</a>
+            <a asp-area="Administration" asp-page="/Roles" class="navbar-text mx-2 d-inline-block btn-square-purple">Roles</a>
+            <span class="ml-auto text-white d-md-block d-none">Administration Center</span>
+        </nav>
+    </header>
+    <main class="overflow-hidden position-relative">
+        <div class="container-fluid">
+            @RenderBody()
+        </div>
+    </main>
+    <footer class="footer position-relative">
+        <div class="container-fluid">
+            <div class="row border-top">
+                <div class="col-11 offset-1 my-2">
+                    <span>&copy; 2021 - Animulu - </span>
+                    <a asp-page="/Privacy" class="text-onhover">Privacy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/malihu-custom-scrollbar-plugin/dist/js/jquery.mCustomScrollbar.min.js"></script>
+    <script src="~/lib/css-element-queries/js/ResizeSensor.js"></script>
+    <script src="~/lib/css-element-queries/js/ElementQueries.js"></script>
+    <partial name="_ValidationScriptsPartial" />
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

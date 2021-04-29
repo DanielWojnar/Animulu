@@ -1,0 +1,36 @@
+﻿<div class="col-12 border-ep-thin bg-grey pb-2 mb-2">
+    <h2 >Manage your account</h2>
+</div>
+<div class="col-md-4 col-12 bg-grey mt-2 font-content">
+    <a asp-area="Identity" asp-page="/Account/Index" class="text-onhover">
+        <div class="col-12 py-2 border-radius-light @if (ViewData["Title"].ToString() == "Account profile") {<text>bg-purple-light</text>} ">
+            Profile
+        </div>
+    </a>
+    <a asp-area="Identity" asp-page="/Account/Email" class="text-onhover">
+        <div class="col-12 py-2 border-radius-light @if (ViewData["Title"].ToString() == "Account email") {<text>bg-purple-light</text>}">
+            Email
+        </div>
+    </a>
+    <a asp-area="Identity" asp-page="/Account/ChangePassword" class="text-onhover">
+        <div class="col-12 py-2 border-radius-light @if (ViewData["Title"].ToString() == "Account password") {<text>bg-purple-light</text>}">
+            Password
+        </div>
+    </a>
+    @if (Model.Permission)
+    {
+        <a asp-area="Administration" asp-page="/Index" class="text-onhover">
+            <div class="col-12 py-2 border-radius-light">
+                Administration
+            </div>
+        </a>
+    }
+    <a asp-area="Identity" asp-page="/Account/PersonalData" class="text-onhover">
+        <div class="col-12 py-2 border-radius-light @if (ViewData["Title"].ToString() == "Account personal data") {<text>bg-purple-light</text>}">
+            Personal Data
+        </div>
+    </a>
+</div>
+<div class="col-12 d-md-none border-ep-thin mt-2">
+
+</div>

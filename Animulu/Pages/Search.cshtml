@@ -1,0 +1,133 @@
+﻿@page "{pageid=1:int}"
+@model Animulu.Pages.SearchModel
+@{
+    ViewData["Title"] = "Search";
+    ViewData["SubTitle"] = "Search";
+    ViewData["Identity"] = "false";
+}
+<div class="row text-center justify-content-center ">
+    <div id="tagsDropdown" class="dropdown col-lg-4 px-0 mx-2 btn-filter offset-lg-2 col-5">
+        <button class="btn dropdown-toggle col-12 py-md-3 py-1 text-white font-content" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <i class="fas fa-tags"></i> Tags
+        </button>
+        <ul id="tagsUL" class="dropdown-menu checkbox-menu allow-focus col-12 p-0 font-content scroll-purple" aria-labelledby="dropdownMenu1">
+            @foreach (var tn in Model.atNames)
+            {
+                <li class="col-12 p-0">
+                    <label class="col-12 checkmark-cont">
+                        <input type="checkbox" class="tagBtn" value="@tn.Replace(" ","-")">@tn
+                        <span class="checkmark"></span>
+                    </label>
+                </li>
+            }
+        </ul>
+    </div>
+    <div id="orderDropdown" class="dropdown col-lg-4 px-0 mx-2 btn-filter col-5 mb-1">
+        <button class="btn dropdown-toggle col-12 py-md-3 py-1 text-white font-content" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <i class="fas fa-sort"></i> Sort
+        </button>
+        <ul class="dropdown-menu radio-menu col-12 p-0 font-content" aria-labelledby="dropdownMenu2">
+            <li class="col-12 p-0">
+                <label class="col-12 checkmark-cont radio-active">
+                    <input type="radio" name="order" class="orderBtn" value="popular">Popular
+                    <span class="checkmark radio-fix"></span>
+                </label>
+            </li>
+            <li class="col-12 p-0">
+                <label class="col-12 checkmark-cont radio-active">
+                    <input type="radio" name="order" class="orderBtn" value="mviews">Views
+                    <span class="checkmark radio-fix"></span>
+                </label>
+            </li>
+            <li class="col-12 p-0">
+                <label class="col-12 checkmark-cont radio-active">
+                    <input type="radio" name="order" class="orderBtn" value="rating">Rating
+                    <span class="checkmark radio-fix"></span>
+                </label>
+            </li>
+            <li class="col-12 p-0">
+                <label class="col-12 checkmark-cont radio-active">
+                    <input type="radio" name="order" class="orderBtn" value="rdate">Release
+                    <span class="checkmark radio-fix"></span>
+                </label>
+            </li>
+            <li class="col-12 p-0">
+                <label class="col-12 checkmark-cont radio-active">
+                    <input type="radio" name="order" class="orderBtn" value="alph">Alphabetical
+                    <span class="checkmark radio-fix"></span>
+                </label>
+            </li>
+        </ul>
+    </div>
+    <div class="row col-12"></div>
+    @if (Model.Shows.Count() > 0)
+    {
+        foreach (var s in Model.Shows)
+        {
+            <div class=" col-4 col-sm-3 col-md-3 col-lg-2 shadow-out-s card p-0 bg-grey m-2">
+                <a asp-page="/show" asp-route-show="@s.Title.Replace(" ", "-")"><span class="card-href"></span></a>
+                <img class="card-img-top" src="~/images/covers/@s.CoverImg">
+                <div class="card-shadow"></div>
+                <div class="card-body py-2 px-2 d-flex flex-column justify-content-center ">
+                    <div>
+                        <div class="card-show-fix"></div>
+                        <h5 class="card-title pb-0 mb-1">
+                            @if (s.Title.Length >= 50)
+                            {
+                                @($"{s.Title.Remove(47)}...");
+                            }
+                            else
+                            {
+                                @s.Title
+                            }
+                        </h5>
+                        <p class="card-text text-muted p-0 mb-0">
+                            <span class="d-block">
+                                @for (float i = 1; i < 6; i++)
+                                {
+                                    if (s.Score >= i)
+                                    {
+                                        <i class="fas fa-star star-fill"></i>
+                                    }
+                                    else if (s.Score < i && s.Score >= (i - 0.5))
+                                    {
+                                        <i class="fas fa-star star-half"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-star star-empty"></i>
+                                    }
+                                }
+                            </span>
+                        </p>
+                        <div class="card-show-fix"></div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <h1 class="col-12 text-center m-2">No results found.</h1>
+    }
+    <div class="col-12 text-white mt-1 mb-2">
+        <a asp-page="/search" asp-route-pageid="1" asp-route-quote="@Model.Quote" asp-route-order="@Model.Order" asp-route-tag="@Model.Tag" class="btn btn-square-grey-small font-content @if (Model.navPage.CurPage == 1 || Model.navPage.TotPages == 0) { <text>d-none</text> } ">
+            <i class="fas fa-angle-double-left"></i>
+        </a>
+        <a asp-page="/search" asp-route-pageid="@(Model.navPage.CurPage-1)" asp-route-quote="@Model.Quote" asp-route-order="@Model.Order" asp-route-tag="@Model.Tag" class="btn btn-square-grey-small font-content @if (Model.navPage.CurPage == 1 || Model.navPage.TotPages == 0) { <text>d-none</text> } ">
+            <i class="fas fa-angle-left"></i>
+        </a>
+        @for (int i = 0; i < Model.navPage.MaxPage; i++)
+        {
+            <a asp-page="/search" asp-route-pageid="@(Model.navPage.MinPage+i)" asp-route-quote="@Model.Quote" asp-route-order="@Model.Order" asp-route-tag="@Model.Tag" class="btn btn-square-grey-small font-content @if ((i + Model.navPage.MinPage) == Model.navPage.CurPage) {<text>bg-grey</text>} @if (i > 3) { <text>d-none-mobile</text> } ">
+                @(i+Model.navPage.MinPage)
+            </a>
+        }
+        <a asp-page="/search" asp-route-pageid="@(Model.navPage.CurPage+1)" asp-route-quote="@Model.Quote" asp-route-order="@Model.Order" asp-route-tag="@Model.Tag" class="btn btn-square-grey-small font-content @if (Model.navPage.CurPage == Model.navPage.TotPages || Model.navPage.TotPages == 0) { <text>d-none</text> } ">
+            <i class="fas fa-angle-right"></i>
+        </a>
+        <a asp-page="/search" asp-route-pageid="@(Model.navPage.TotPages)" asp-route-quote="@Model.Quote" asp-route-order="@Model.Order" asp-route-tag="@Model.Tag" class="btn btn-square-grey-small font-content @if (Model.navPage.CurPage == Model.navPage.TotPages || Model.navPage.TotPages == 0) { <text>d-none</text> } ">
+            <i class="fas fa-angle-double-right"></i>
+        </a>
+    </div>
+</div>
