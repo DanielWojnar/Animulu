@@ -34,7 +34,7 @@ Animulu is built on ASP.NET Core 3.1 with use of:
 * jQuery
 * malihu custom scrollbar plugin
 
-##### NuGet Packages
+### NuGet Packages
 * Microsoft.AspNetCore.Identity.EntityFrameworkCore
 * Microsoft.AspNetCore.Identity.UI
 * Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation
