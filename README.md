@@ -1,5 +1,5 @@
 # Animulu
-Animulu is video streaming service built on ASP.NET Core that is great starting point for creating your new video streaming service. With easy to customize code, a lot useful built in functionalities and minimalistic great looking frontend, Animulu will save you a lot of time in your future projects.
+Animulu is video streaming service built on ASP.NET Core that is great starting point for creating your new video streaming service. With easy to customize code, a lot useful built-in functionalities and minimalistic great looking frontend, Animulu will save you a lot of time in your future projects.
 
 ## Functionalities
 Animulu supports: 
