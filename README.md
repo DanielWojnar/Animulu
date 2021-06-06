@@ -11,6 +11,7 @@ Animulu supports:
 
 ## Demo
 Check out online [DEMO](https://animulu.azurewebsites.net/).
+(down at the moment)
 
 ## Technology
 Animulu is built on ASP.NET Core 3.1 with use of:
