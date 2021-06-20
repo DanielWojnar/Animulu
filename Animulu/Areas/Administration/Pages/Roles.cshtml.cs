@@ -18,9 +18,9 @@ namespace Animulu.Areas.Administration.Pages
         private readonly UserManager<AnimuluUser> _userManager;
         private readonly SignInManager<AnimuluUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly RoleService _role;
-        private readonly NavPageService _nav;
-        public RolesModel(UserManager<AnimuluUser> userManager, SignInManager<AnimuluUser> signInManager, RoleManager<IdentityRole> roleManager, RoleService role, NavPageService nav)
+        private readonly IRoleService _role;
+        private readonly INavPageService _nav;
+        public RolesModel(UserManager<AnimuluUser> userManager, SignInManager<AnimuluUser> signInManager, RoleManager<IdentityRole> roleManager, IRoleService role, INavPageService nav)
         {
             _userManager = userManager;
             _signInManager = signInManager;

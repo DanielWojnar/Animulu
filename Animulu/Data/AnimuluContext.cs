@@ -11,7 +11,7 @@ namespace Animulu.Data
     {
         public AnimuluContext(DbContextOptions options):base(options)
         {
-
+            
         }
 
         public DbSet<Comment> Comments { get; set; }

@@ -14,9 +14,9 @@ namespace Animulu.Areas.Administration.Pages
     [Authorize(Policy = "Admin")]
     public class IndexModel : PageModel
     {
-        private readonly ShowService _show;
-        private readonly NavPageService _nav;
-        public IndexModel(ShowService show, NavPageService nav)
+        private readonly IShowService _show;
+        private readonly INavPageService _nav;
+        public IndexModel(IShowService show, INavPageService nav)
         {
             _show = show;
             _nav = nav;

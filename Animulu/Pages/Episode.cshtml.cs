@@ -15,11 +15,11 @@ namespace Animulu.Pages
     public class EpisodeModel : PageModel
     {
         private readonly ILogger<EpisodeModel> _logger;
-        private readonly ShowService _show;
-        private readonly EpisodeService _episode;
-        private readonly TagService _tag;
-        private readonly ViewsService _view;
-        public EpisodeModel(ILogger<EpisodeModel> logger, ShowService show, EpisodeService episode, TagService tag, ViewsService view)
+        private readonly IShowService _show;
+        private readonly IEpisodeService _episode;
+        private readonly ITagService _tag;
+        private readonly IViewsService _view;
+        public EpisodeModel(ILogger<EpisodeModel> logger, IShowService show, IEpisodeService episode, ITagService tag, IViewsService view)
         {
             _logger = logger;
             _show = show;

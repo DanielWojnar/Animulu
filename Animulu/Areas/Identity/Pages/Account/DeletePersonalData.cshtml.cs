@@ -21,9 +21,9 @@ namespace Animulu.Areas.Identity.Pages.Account
         private readonly SignInManager<AnimuluUser> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
         private readonly IWebHostEnvironment _hostEnv;
-        private readonly CommentService _comment;
+        private readonly ICommentService _comment;
 
-        public DeletePersonalDataModel(UserManager<AnimuluUser> userManager, SignInManager<AnimuluUser> signInManager, ILogger<DeletePersonalDataModel> logger, IWebHostEnvironment hostEnv, CommentService comment)
+        public DeletePersonalDataModel(UserManager<AnimuluUser> userManager, SignInManager<AnimuluUser> signInManager, ILogger<DeletePersonalDataModel> logger, IWebHostEnvironment hostEnv, ICommentService comment)
         {
             _userManager = userManager;
             _signInManager = signInManager;

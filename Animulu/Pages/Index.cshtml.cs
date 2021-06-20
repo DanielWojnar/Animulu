@@ -14,10 +14,10 @@ namespace Animulu.Pages
     public class IndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;
-        private readonly ShowService _show;
-        private readonly EpisodeService _episode;
-        private readonly TagService _tag;
-        public IndexModel(ILogger<IndexModel> logger, ShowService show, EpisodeService episode, TagService tag)
+        private readonly IShowService _show;
+        private readonly IEpisodeService _episode;
+        private readonly ITagService _tag;
+        public IndexModel(ILogger<IndexModel> logger, IShowService show, IEpisodeService episode, ITagService tag)
         {
             _logger = logger;
             _show = show;

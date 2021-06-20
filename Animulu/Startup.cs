@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Animulu.Models;
+using Animulu.Services.Implementations;
 
 namespace Animulu
 {
@@ -33,15 +34,15 @@ namespace Animulu
         public void ConfigureServices(IServiceCollection services)
         {
             
-            services.AddTransient<ShowService>();
-            services.AddTransient<EpisodeService>();
-            services.AddTransient<TagService>();
-            services.AddTransient<NavPageService>();
-            services.AddTransient<RatingService>();
-            services.AddTransient<ViewsService>();
-            services.AddTransient<LikeService>();
-            services.AddTransient<CommentService>();
-            services.AddTransient<RoleService>();
+            services.AddTransient<IShowService, ShowService>();
+            services.AddTransient<IEpisodeService, EpisodeService>();
+            services.AddTransient<ITagService, TagService>();
+            services.AddTransient<INavPageService, NavPageService>();
+            services.AddTransient<IRatingService, RatingService>();
+            services.AddTransient<IViewsService, ViewsService>();
+            services.AddTransient<ILikeService, LikeService>();
+            services.AddTransient<ICommentService, CommentService>();
+            services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddHttpContextAccessor();
             services.Configure<AuthMessageSenderOptions>(Configuration);

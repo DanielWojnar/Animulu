@@ -15,10 +15,10 @@ namespace Animulu.Pages
     public class SearchModel : PageModel
     {
         private readonly ILogger<SearchModel> _logger;
-        private readonly ShowService _show;
-        private readonly TagService _tag;
-        private readonly NavPageService _navpage;
-        public SearchModel(ILogger<SearchModel> logger, ShowService show, TagService tag, NavPageService navpage)
+        private readonly IShowService _show;
+        private readonly ITagService _tag;
+        private readonly INavPageService _navpage;
+        public SearchModel(ILogger<SearchModel> logger, IShowService show, ITagService tag, INavPageService navpage)
         {
             _logger = logger;
             _show = show;

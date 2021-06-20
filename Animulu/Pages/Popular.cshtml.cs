@@ -15,9 +15,9 @@ namespace Animulu.Pages
     public class PopularModel : PageModel
     {
         private readonly ILogger<PopularModel> _logger;
-        private readonly ShowService _show;
-        private readonly NavPageService _navpage;
-        public PopularModel(ILogger<PopularModel> logger, ShowService show, NavPageService navpage)
+        private readonly IShowService _show;
+        private readonly INavPageService _navpage;
+        public PopularModel(ILogger<PopularModel> logger, IShowService show, INavPageService navpage)
         {
             _logger = logger;
             _show = show;

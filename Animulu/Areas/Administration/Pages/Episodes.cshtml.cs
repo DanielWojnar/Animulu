@@ -14,9 +14,9 @@ namespace Animulu.Areas.Administration.Pages
     [Authorize(Policy = "Admin")]
     public class EpisodesModel : PageModel
     {
-        private readonly EpisodeService _episode;
-        private readonly NavPageService _nav;
-        public EpisodesModel(EpisodeService episode, NavPageService nav)
+        private readonly IEpisodeService _episode;
+        private readonly INavPageService _nav;
+        public EpisodesModel(IEpisodeService episode, INavPageService nav)
         {
             _episode = episode;
             _nav = nav;
