@@ -25,7 +25,7 @@ Animulu is built on ASP.NET Core 3.1 with use of:
 1. Clone Animulu repository
 2. Import databases from `Demo databases/`
 3. Put necessary libraries into `wwwroot/lib/`
-4. Run
+4. Run using Cake or manualy
 5. Start creating your own streaming service with Animulu
 
 ## Necessary libraries
