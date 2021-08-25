@@ -74,7 +74,7 @@ namespace Animulu
             services.AddServerSideBlazor();
             services.AddHttpClient();
             var connection = Configuration.GetConnectionString("animulu_db");
-            services.AddDbContext<AnimuluContext>(options => options.UseSqlServer(connection));
+            services.AddDbContext<AnimuluContext>(options => options.UseSqlServer(connection).EnableSensitiveDataLogging());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

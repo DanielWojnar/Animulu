@@ -34,13 +34,12 @@ namespace Animulu.Services.Implementations
         {
             try
             {
-                float result = await (from r in _context.Reviews
-                                      where r.ShowId == show.Id
-                                      select r.Value).SumAsync();
-                float count = await (from r in _context.Reviews
-                                     where r.ShowId == show.Id
-                                     select r.Value).CountAsync();
-                result = result / count;
+                var values = await (from r in _context.Reviews
+                                    where r.ShowId == show.Id
+                                    group r by r.ShowId into g
+                                    select new { Count = g.Count(), Sum = g.Sum(x => x.Value) }).AsNoTracking().FirstAsync();
+
+                var result = (float)values.Sum / (float)values.Count;
                 if(float.IsNaN(result))
                 {
                     result = 0f;
@@ -59,7 +58,7 @@ namespace Animulu.Services.Implementations
                                 select r).AsNoTracking().CountAsync();
             return result;
         }
-        public async Task PostRatingAsync(Show show,int score, AnimuluUser user)
+        public async Task PostRatingAsync(Show show, int score, AnimuluUser user)
         {
             var rate = await GetRatingAsync(show, user);
             if(rate == null)

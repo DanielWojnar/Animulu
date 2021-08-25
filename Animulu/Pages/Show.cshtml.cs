@@ -35,12 +35,12 @@ namespace Animulu.Pages
         public async Task<IActionResult> OnGetAsync(string show)
         {
             showObj = await _show.GetShowAsync(show);
-            episodes = await _episode.GetEpisodesAsync(showObj);
-            Tags = await _tag.GetTagsAsync(showObj);
-            if(showObj.Title == "" || showObj.Title == null)
+            if(showObj == null)
             {
                 return Redirect("/search");
             }
+            episodes = await _episode.GetEpisodesAsync(showObj);
+            Tags = await _tag.GetTagsAsync(showObj);
             return Page();
         }
     }

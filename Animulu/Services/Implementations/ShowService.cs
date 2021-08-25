@@ -6,10 +6,13 @@ using Animulu.Models;
 using Animulu.Data;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace Animulu.Services.Implementations
 {
+
     public class ShowService : IShowService
     {
+
         private readonly AnimuluContext _context;
         public ShowService(AnimuluContext context)
         {
@@ -17,11 +20,8 @@ namespace Animulu.Services.Implementations
         }
         public async Task RemoveShowAsync(int id)
         {
-            var show = await GetShowAsync(id);
-            if(show == null)
-            {
-                return;
-            }
+            var show = new Show { Id = id };
+            _context.Shows.Attach(show);
             _context.Shows.Remove(show);
             await _context.SaveChangesAsync();
         }
@@ -35,7 +35,7 @@ namespace Animulu.Services.Implementations
             try
             {
                 var query = from s in _context.Shows
-                             select s;
+                            select s;
                 if(queryTitle != null)
                 {
                     query = query.Where(s => s.Title.Contains(queryTitle));
@@ -62,24 +62,25 @@ namespace Animulu.Services.Implementations
             {
                 var rating = from r in _context.Reviews
                              group r by r.ShowId into g
-                             select new { ShowId = g.Key, Count = (float)g.Count(), Sum = (float)g.Sum(s => s.Value)};
+                             select new { ShowId = (int?)g.Key, Count = (float?)g.Count(), Sum = (float?)g.Sum(s => s.Value) };
                 var trending = from v in _context.Views
                                where v.ViewDate >= DateTime.Now.AddDays(-31)
-                               group v.ShowId by v.ShowId into g
-                               select new { ShowId = g.Key, Views = g.Count() };
+                               group v by v.ShowId into g
+                               select new { ShowId = (int?)g.Key, Views = (int?)g.Count() };
                 var result = await (from s in _context.Shows
                                     join r in rating on s.Id equals r.ShowId into ShowGroup1
                                     from sg1 in ShowGroup1.DefaultIfEmpty()
                                     join t in trending on s.Id equals t.ShowId into ShowGroup2
                                     from sg2 in ShowGroup2.DefaultIfEmpty()
                                     orderby sg2.Views descending
-                                    select new ShowDisplay {
-                                        Id=s.Id,
+                                    select new ShowDisplay
+                                    {
+                                        Id = s.Id,
                                         Title = s.Title,
                                         Description = s.Description,
                                         CoverImg = s.CoverImg,
                                         ReleaseDate = s.ReleaseDate,
-                                        Score = sg1 == null ? 0 : (sg1.Sum / sg1.Count)
+                                        Score = sg1.Count == null ? 0 : (float)(sg1.Sum / sg1.Count)
                                     }).Skip(skip).Take(take).AsNoTracking().ToListAsync();
                 return result;
             }
@@ -95,7 +96,7 @@ namespace Animulu.Services.Implementations
             {
                 var rating = from r in _context.Reviews
                              group r by r.ShowId into g
-                             select new { ShowId = g.Key, Count = (float)g.Count(), Sum = (float)g.Sum(s => s.Value) };
+                             select new { ShowId = (int?)g.Key, Count = (float?)g.Count(), Sum = (float?)g.Sum(s => s.Value) };
                 var result = await (from s in _context.Shows
                                     join r in rating on s.Id equals r.ShowId into ShowGroup
                                     from sg in ShowGroup.DefaultIfEmpty()
@@ -106,7 +107,7 @@ namespace Animulu.Services.Implementations
                                         Description = s.Description,
                                         CoverImg = s.CoverImg,
                                         ReleaseDate = s.ReleaseDate,
-                                        Score = sg == null ? 0 : (sg.Sum / sg.Count)
+                                        Score = sg.Count == null ? 0 : (float)(sg.Sum / sg.Count)
                                     }).OrderBy(s => Guid.NewGuid()).Skip(skip).Take(take).AsNoTracking().ToListAsync();
                 return result;
             }
@@ -155,14 +156,15 @@ namespace Animulu.Services.Implementations
             }
             catch
             {
-                return new Show();
+                return null;
             }
         }
         public async Task<IEnumerable<ShowDisplay>> GetSearchAsync(int skip, int take, string quote, string tag, string order)
         {
             var rating = from r in _context.Reviews
                          group r by r.ShowId into g
-                         select new { ShowId = g.Key, Score = ((float)g.Sum(s => s.Value)/(float)g.Count()) };
+                         select new { ShowId = (int?)g.Key, Score = (float?)((float)g.Sum(s => s.Value)/(float)g.Count()) };
+
             var query = from s in _context.Shows
                         join r in rating on s.Id equals r.ShowId into ShowGroup
                         from sg in ShowGroup.DefaultIfEmpty()
@@ -174,7 +176,7 @@ namespace Animulu.Services.Implementations
                             Description = s.Description,
                             CoverImg = s.CoverImg,
                             ReleaseDate = s.ReleaseDate,
-                            Score = sg == null ? 0 : sg.Score
+                            Score = sg.Score == null ? 0 : (float)sg.Score
                         };
             if (quote != "" && quote != null)
             {
@@ -184,11 +186,9 @@ namespace Animulu.Services.Implementations
             {
 
                 var tags = tag.Split(' ');
-                var allTags = (from ta in _context.Tags
-                               where tags.Any(t => ta.Name.Replace(" ", "-") == t)
-                               select ta);
                 var tagsQ = from tc in _context.TagConnections
-                            join at in allTags on tc.TagId equals at.Id
+                            join ta in _context.Tags on tc.TagId equals ta.Id
+                            where tags.Any(t => ta.Name.Replace(" ", "-") == t)
                             group tc.ShowId by tc.ShowId into g
                             select new { ShowId = g.Key, Count = g.Count() };
                 query = from s in query
@@ -204,7 +204,7 @@ namespace Animulu.Services.Implementations
                 case "mviews":
                     var mostv = (from v in _context.Views
                                  group v.ShowId by v.ShowId into g
-                                 select new { ShowId = g.Key, Views = g.Count() });
+                                 select new { ShowId = (int?)g.Key, Views = (int?)g.Count() });
                     query = from s in query
                             join t in mostv on s.Id equals t.ShowId into ShowGroup
                             from sg in ShowGroup.DefaultIfEmpty()
@@ -215,7 +215,7 @@ namespace Animulu.Services.Implementations
                     var trending = (from v in _context.Views
                                     where v.ViewDate >= DateTime.Now.AddDays(-31)
                                     group v.ShowId by v.ShowId into g
-                                    select new { ShowId = g.Key, Views = g.Count() });
+                                    select new { ShowId = (int?)g.Key, Views = (int?)g.Count() });
                     query = from s in query
                             join t in trending on s.Id equals t.ShowId into ShowGroup
                             from sg in ShowGroup.DefaultIfEmpty()
@@ -231,7 +231,7 @@ namespace Animulu.Services.Implementations
                     var deford = (from v in _context.Views
                                   where v.ViewDate >= DateTime.Now.AddDays(-31)
                                   group v.ShowId by v.ShowId into g
-                                  select new { ShowId = g.Key, Views = g.Count() });
+                                  select new { ShowId = (int?)g.Key, Views = (int?)g.Count() });
                     query = from s in query
                             join t in deford on s.Id equals t.ShowId into ShowGroup
                             from sg in ShowGroup.DefaultIfEmpty()

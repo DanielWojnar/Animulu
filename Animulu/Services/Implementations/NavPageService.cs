@@ -95,11 +95,9 @@ namespace Animulu.Services.Implementations
             {
 
                 var tags = tag.Split(' ');
-                var allTags = (from ta in _context.Tags
-                               where tags.Any(t => ta.Name.Replace(" ", "-") == t)
-                               select ta);
                 var tagsQ = from tc in _context.TagConnections
-                            join at in allTags on tc.TagId equals at.Id
+                            join ta in _context.Tags on tc.TagId equals ta.Id
+                            where tags.Any(t => ta.Name.Replace(" ", "-") == t)
                             group tc.ShowId by tc.ShowId into g
                             select new { ShowId = g.Key, Count = g.Count() };
                 query = from s in query
@@ -115,7 +113,7 @@ namespace Animulu.Services.Implementations
                 case "mviews":
                     var mostv = (from v in _context.Views
                                  group v.ShowId by v.ShowId into g
-                                 select new { ShowId = g.Key, Views = g.Count() });
+                                 select new { ShowId = (int?)g.Key, Views = (int?)g.Count() });
                     query = from s in query
                             join t in mostv on s.Id equals t.ShowId into ShowGroup
                             from sg in ShowGroup.DefaultIfEmpty()
@@ -126,7 +124,7 @@ namespace Animulu.Services.Implementations
                     var trending = (from v in _context.Views
                                     where v.ViewDate >= DateTime.Now.AddDays(-31)
                                     group v.ShowId by v.ShowId into g
-                                    select new { ShowId = g.Key, Views = g.Count() });
+                                    select new { ShowId = (int?)g.Key, Views = (int?)g.Count() });
                     query = from s in query
                             join t in trending on s.Id equals t.ShowId into ShowGroup
                             from sg in ShowGroup.DefaultIfEmpty()
@@ -142,7 +140,7 @@ namespace Animulu.Services.Implementations
                     var deford = (from v in _context.Views
                                   where v.ViewDate >= DateTime.Now.AddDays(-31)
                                   group v.ShowId by v.ShowId into g
-                                  select new { ShowId = g.Key, Views = g.Count() });
+                                  select new { ShowId = (int?)g.Key, Views = (int?)g.Count() });
                     query = from s in query
                             join t in deford on s.Id equals t.ShowId into ShowGroup
                             from sg in ShowGroup.DefaultIfEmpty()

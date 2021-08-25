@@ -25,11 +25,8 @@ namespace Animulu.Services.Implementations
         }
         public async Task RemoveCommentAsync(int commentid)
         {
-            var comment = await GetCommentAsync(commentid);
-            if(comment == null)
-            {
-                return;
-            }
+            var comment = new Comment { Id = commentid };
+            _context.Comments.Attach(comment);
             _context.Comments.Remove(comment);
             await _context.SaveChangesAsync();
         }
@@ -52,9 +49,9 @@ namespace Animulu.Services.Implementations
             try
             {
                 var comments = await (from c in _context.Comments
-                                    where c.EpisodeId == episode.Id
-                                    orderby c.CreationDate descending
-                                    select c).Take(take+1).AsNoTracking().ToListAsync();
+                                     where c.EpisodeId == episode.Id
+                                     orderby c.CreationDate descending
+                                     select c).Take(take+1).AsNoTracking().ToListAsync();
                 var result = await ConvertCommentAsync(comments);
                 return result;
             }

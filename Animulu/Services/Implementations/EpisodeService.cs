@@ -17,11 +17,8 @@ namespace Animulu.Services.Implementations
         }
         public async Task RemoveEpisodeAsync(int id)
         {
-            var episode = await GetEpisodeAsync(id);
-            if (episode == null)
-            {
-                return;
-            }
+            var episode = new Episode { Id = id };
+            _context.Episodes.Attach(episode);
             _context.Episodes.Remove(episode);
             await _context.SaveChangesAsync();
         }
@@ -36,7 +33,7 @@ namespace Animulu.Services.Implementations
             {
                 var views = from v in _context.Views
                             group v.EpisodeId by v.EpisodeId into g
-                            select new { EpisdeId = g.Key, Count = g.Count() };
+                            select new { EpisdeId = (int?)g.Key, Count = (int?)g.Count() };
                 var result = await (from e in _context.Episodes
                                     join s in _context.Shows on e.ShowId equals s.Id
                                     join v in views on e.Id equals v.EpisdeId into EpisodeGroup
@@ -49,7 +46,7 @@ namespace Animulu.Services.Implementations
                                         EpisodeIndex = e.EpisodeIndex,
                                         CoverImg = s.CoverImg,
                                         ShowTitle = s.Title,
-                                        Views = eg == null ? 0 : eg.Count
+                                        Views = eg.Count == null ? 0 : (int)eg.Count
                                     }).Skip(skip).Take(take).AsNoTracking().ToListAsync();
                 return result;
             }
@@ -64,7 +61,7 @@ namespace Animulu.Services.Implementations
             {
                 var views = from v in _context.Views
                             group v.EpisodeId by v.EpisodeId into g
-                            select new { EpisdeId = g.Key, Count = g.Count() };
+                            select new { EpisdeId = (int?)g.Key, Count = (int?)g.Count() };
                 var result = await (from e in _context.Episodes
                                     join s in _context.Shows on e.ShowId equals s.Id
                                     join v in views on e.Id equals v.EpisdeId into EpisodeGroup
@@ -77,7 +74,7 @@ namespace Animulu.Services.Implementations
                                         EpisodeIndex = e.EpisodeIndex,
                                         CoverImg = s.CoverImg,
                                         ShowTitle = s.Title,
-                                        Views = eg == null ? 0 : eg.Count
+                                        Views = eg.Count == null ? 0 : (int)eg.Count
                                     }).Skip(skip).Take(take).AsNoTracking().ToListAsync();
                 return result;
             }
@@ -141,7 +138,7 @@ namespace Animulu.Services.Implementations
                 return null;
             }
         }
-        public async Task<Episode> GetEpisodeAsync(Show show,int index)
+        public async Task<Episode> GetEpisodeAsync(Show show, int index)
         {
             try
             {
@@ -153,7 +150,7 @@ namespace Animulu.Services.Implementations
             }
             catch
             {
-                return new Episode();
+                return null;
             }
         }
     }

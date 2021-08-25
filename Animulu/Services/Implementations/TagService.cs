@@ -19,11 +19,9 @@ namespace Animulu.Services.Implementations
         {
             try
             {
-                var tcs = from tc in _context.TagConnections
-                          where tc.ShowId == show.Id
-                          select tc;
                 var result = await (from t in _context.Tags
-                                    join tc in tcs on t.Id equals tc.TagId
+                                    join tc in _context.TagConnections on t.Id equals tc.TagId
+                                    where tc.ShowId == show.Id
                                     select t).AsNoTracking().ToListAsync();
                 return result;
             }
